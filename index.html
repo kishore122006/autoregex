@@ -41,6 +41,17 @@ svg{width:100%;height:auto;display:block}
 .e{fill:none;stroke:var(--mut);stroke-width:1.6}
 .e.hot{stroke:var(--hot);stroke-width:3.4;animation:pulse .7s ease-in-out infinite alternate}
 @keyframes pulse{from{opacity:.45}to{opacity:1}}
+.e{transition:stroke .25s,stroke-width .25s}
+.node{cursor:grab;touch-action:none}
+.node:active{cursor:grabbing}
+.banner{transition:background .3s,border-color .3s}
+.banner.ok,.banner.no{animation:pop .45s ease-out}
+@keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes hop{from{transform:translateY(-14px)}to{transform:translateY(-3px)}}
+.tape span.cur{animation:hop .3s ease-out}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--mut);margin-top:8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:5px;vertical-align:-1px;border:1.5px solid var(--tx);background:var(--st)}
+.legend i.dbl{box-shadow:0 0 0 2px var(--card),0 0 0 3.5px var(--tx)}
 .lb{font:600 13px ui-monospace,Menlo,monospace;fill:var(--tx);text-anchor:middle;paint-order:stroke;stroke:var(--card);stroke-width:4px}
 .tape{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0;min-height:44px}
 .tape span{width:36px;height:42px;display:grid;place-items:center;border:1px solid var(--bd);border-radius:6px;font:600 18px ui-monospace,Menlo,monospace;transition:.2s}
@@ -55,6 +66,7 @@ svg{width:100%;height:auto;display:block}
 </head>
 <body>
 <header>
+  <button id="theme" style="float:right">◐ Light / Dark</button>
   <h1>Auto<span>Regex</span> – Visual DFA/NFA Simulator</h1>
   <p>Build an automaton or compile a regular expression, then step through a string and watch the states light up.</p>
 </header>
@@ -79,7 +91,10 @@ svg{width:100%;height:auto;display:block}
     </div>
   </aside>
   <main>
-    <div class="card"><h2>2 · State graph</h2><svg id="g" viewBox="0 0 760 520"></svg></div>
+    <div class="card"><h2>2 · State graph</h2>
+      <div class="row"><label>Layout</label><select id="lay"><option value="circle">Circle</option><option value="lr">Left → Right</option></select><span class="hint" style="margin:0">Drag any state to move it.</span></div>
+      <svg id="g" viewBox="0 0 760 520"></svg>
+      <div class="legend"><span><i style="background:var(--hot)"></i>current state</span><span><i style="background:var(--ok)"></i>accepted</span><span><i style="background:var(--no)"></i>rejected</span><span><i class="dbl"></i>accepting state</span><span>→ start state</span></div></div>
     <div class="card">
       <h2>3 · Run a string</h2>
       <div class="row"><input type="text" id="inp" class="grow" placeholder="e.g. 100101" autocomplete="off" spellcheck="false">
@@ -100,11 +115,12 @@ const PRE=[
  {n:'Strings ending with ab (NFA)',m:'NFA',a:'ab',s:['q0','q1','q2'],st:'q0',f:['q2'],t:'aabab',d:{'q0,a':'q0,q1','q0,b':'q0','q1,b':'q2'}},
  {n:'a*b* with ε-move (ε-NFA)',m:'NFA',a:'ab',s:['q0','q1'],st:'q0',f:['q1'],t:'aabb',d:{'q0,a':'q0','q0,ε':'q1','q1,b':'q1'}}
 ];
-let M,steps=[],pos=0,W=[],timer=null;
+let M,steps=[],pos=0,W=[],timer=null,POS={},LAYOUT='circle',LA=[],VW=760,VH=520,drag=null;
 const cols=()=>[...M.alpha,...(M.mode==='NFA'?[EPS]:[])];
 const fmt=s=>s.size?'{'+[...s].join(', ')+'}':'∅';
 
 function loadPreset(p){
+  POS={};LAYOUT='circle';$('lay').value='circle';
   M={mode:p.m,alpha:p.a.split(''),states:[...p.s],start:p.st,finals:new Set(p.f),d:{}};
   p.s.forEach(s=>M.d[s]={});
   for(const k in p.d){const [s,a]=k.split(',');M.d[s][a]=p.d[k].split(',')}
@@ -149,7 +165,7 @@ $('del').onclick=()=>{
   if(M.start===s)M.start=M.states[0];fullRender();
 };
 $('save').onclick=()=>{try{localStorage.setItem('autoregex',JSON.stringify({...M,finals:[...M.finals]}))}catch(e){}};
-$('loadb').onclick=()=>{try{const j=JSON.parse(localStorage.getItem('autoregex'));if(j){j.finals=new Set(j.finals);M=j;fullRender()}}catch(e){}};
+$('loadb').onclick=()=>{try{const j=JSON.parse(localStorage.getItem('autoregex'));if(j){j.finals=new Set(j.finals);M=j;POS={};fullRender()}}catch(e){}};
 
 /* ---------- Regex -> NFA (Thompson construction) ---------- */
 function regexToNFA(src){
@@ -183,17 +199,35 @@ function regexToNFA(src){
   return{mode:'NFA',alpha:[...new Set(tr.map(t=>t[1]).filter(c=>c!==EPS))].sort(),states:st,start:'q'+f.s,finals:new Set(['q'+f.e]),d};
 }
 $('rb').onclick=()=>{
-  try{const r=$('re').value.trim();if(!r)throw Error('Enter a regular expression');M=regexToNFA(r);$('err').textContent='';fullRender()}
+  try{const r=$('re').value.trim();if(!r)throw Error('Enter a regular expression');M=regexToNFA(r);POS={};LAYOUT='lr';$('lay').value='lr';$('err').textContent='';fullRender()}
   catch(e){$('err').textContent=e.message}
 };
 
 /* ---------- Graph drawing ---------- */
+function layout(){
+  const n=M.states.length,P={},dp={};
+  if(LAYOUT==='lr'){
+    const q=[M.start];dp[M.start]=0;
+    for(let i=0;i<q.length;i++){const s=q[i];for(const a of cols())for(const t of(M.d[s]&&M.d[s][a])||[])if(!(t in dp)&&M.states.includes(t)){dp[t]=dp[s]+1;q.push(t)}}
+    let mx=Math.max(0,...Object.values(dp));
+    M.states.forEach(s=>{if(!(s in dp))dp[s]=mx+1});
+    mx=Math.max(...Object.values(dp));
+    VW=Math.max(760,(mx+1)*90+80);VH=520;
+    const col={};M.states.forEach(s=>(col[dp[s]]=col[dp[s]]||[]).push(s));
+    for(const d in col){const k=col[d].length,gap=Math.min(110,420/k);col[d].forEach((s,i)=>P[s]=[70+d*(VW-140)/(mx||1),VH/2+(i-(k-1)/2)*gap])}
+  }else{
+    VW=760;VH=520;
+    M.states.forEach((s,i)=>{const a=Math.PI+2*Math.PI*i/n;P[s]=n===1?[380,260]:[380+295*Math.cos(a),260+185*Math.sin(a)]});
+  }
+  for(const s in POS)if(P[s])P[s]=POS[s];
+  return{P,dp};
+}
 const unit=(x,y)=>{const l=Math.hypot(x,y)||1;return[x/l,y/l]};
 const rot=(x,y,a)=>[x*Math.cos(a)-y*Math.sin(a),x*Math.sin(a)+y*Math.cos(a)];
 const f2=a=>a.map(v=>v.toFixed(1)).join(',');
 function draw(active=new Set(),hot=[],v=null){
-  const n=M.states.length,cx=380,cy=260,R=n>12?19:26,P={};
-  M.states.forEach((s,i)=>{const a=Math.PI+2*Math.PI*i/n;P[s]=n===1?[cx,cy]:[cx+295*Math.cos(a),cy+185*Math.sin(a)]});
+  LA=[active,hot,v];
+  const n=M.states.length,cx=380,cy=260,R=n>12?19:26,{P,dp}=layout(),LR=LAYOUT==='lr';
   const grp={},hs=new Set(hot.map(e=>e[0]+'|'+e[1]));
   for(const s of M.states)for(const a of cols())for(const t of(M.d[s]&&M.d[s][a])||[])
     if(P[t]){const k=s+'|'+t;(grp[k]=grp[k]||{s,t,l:[]}).l.push(a)}
@@ -201,11 +235,11 @@ function draw(active=new Set(),hot=[],v=null){
   for(const g of Object.values(grp)){
     const [x1,y1]=P[g.s],[x2,y2]=P[g.t],cls='e'+(hs.has(g.s+'|'+g.t)?' hot':''),txt=esc(g.l.sort().join(','));
     if(g.s===g.t){
-      const [ux,uy]=n===1?[0,-1]:unit(x1-cx,y1-cy),a1=rot(ux,uy,-.55),a2=rot(ux,uy,.55);
+      const [ux,uy]=(n===1||LR)?[0,-1]:unit(x1-cx,y1-cy),a1=rot(ux,uy,-.55),a2=rot(ux,uy,.55);
       o+=`<path class="${cls}" marker-end="url(#ar)" d="M${f2([x1+a1[0]*R,y1+a1[1]*R])} C${f2([x1+a1[0]*(R+62),y1+a1[1]*(R+62)])} ${f2([x1+a2[0]*(R+62),y1+a2[1]*(R+62)])} ${f2([x1+a2[0]*(R+2),y1+a2[1]*(R+2)])}"/>`;
       lab+=`<text class="lb" x="${x1+ux*(R+54)}" y="${y1+uy*(R+54)}" dy=".35em">${txt}</text>`;
     }else{
-      const [nx,ny]=unit(-(y2-y1),x2-x1),cv=grp[g.t+'|'+g.s]?38:0,c=[(x1+x2)/2+nx*cv,(y1+y2)/2+ny*cv];
+      const [nx,ny]=unit(-(y2-y1),x2-x1),cv=(grp[g.t+'|'+g.s]||(LR&&dp[g.t]<=dp[g.s]))?38:0,c=[(x1+x2)/2+nx*cv,(y1+y2)/2+ny*cv];
       const u1=unit(c[0]-x1,c[1]-y1),u2=unit(c[0]-x2,c[1]-y2);
       o+=`<path class="${cls}" marker-end="url(#ar)" d="M${f2([x1+u1[0]*R,y1+u1[1]*R])} Q${f2(c)} ${f2([x2+u2[0]*(R+2),y2+u2[1]*(R+2)])}"/>`;
       lab+=`<text class="lb" x="${(.25*x1+.5*c[0]+.25*x2+nx*12).toFixed(1)}" y="${(.25*y1+.5*c[1]+.25*y2+ny*12).toFixed(1)}" dy=".35em">${txt}</text>`;
@@ -214,13 +248,13 @@ function draw(active=new Set(),hot=[],v=null){
   for(const s of M.states){
     const [x,y]=P[s];let cl='node';
     if(active.has(s))cl+=v?(v==='ok'?' ok':' no'):' on';
-    o+=`<g class="${cl}"><circle cx="${x}" cy="${y}" r="${R}"/>${M.finals.has(s)?`<circle class="in" cx="${x}" cy="${y}" r="${R-5}"/>`:''}<text x="${x}" y="${y}" dy=".35em">${esc(s)}</text></g>`;
+    o+=`<g class="${cl}" data-s="${esc(s)}"><circle cx="${x}" cy="${y}" r="${R}"/>${M.finals.has(s)?`<circle class="in" cx="${x}" cy="${y}" r="${R-5}"/>`:''}<text x="${x}" y="${y}" dy=".35em">${esc(s)}</text></g>`;
     if(s===M.start){
-      const [ux,uy]=n===1?[-1,0]:rot(...unit(x-cx,y-cy),1.1);
+      const [ux,uy]=(n===1||LR)?[-1,0]:rot(...unit(x-cx,y-cy),1.1);
       o+=`<line class="e" style="stroke:var(--tx)" marker-end="url(#ar)" x1="${x+ux*(R+46)}" y1="${y+uy*(R+46)}" x2="${x+ux*(R+2)}" y2="${y+uy*(R+2)}"/>`;
     }
   }
-  $('g').innerHTML=o+lab;
+  $('g').setAttribute('viewBox',`0 0 ${VW} ${VH}`);$('g').innerHTML=o+lab;
 }
 
 /* ---------- Simulation ---------- */
@@ -271,6 +305,12 @@ $('run').onclick=()=>{
   if(!$('next').disabled)timer=setInterval(next,750);
 };
 $('inp').oninput=resetSim;
+$('lay').onchange=()=>{LAYOUT=$('lay').value;POS={};resetSim()};
+$('theme').onclick=()=>{const r=document.documentElement,dk=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=dk?'light':'dark'};
+const svgEl=$('g');
+svgEl.addEventListener('pointerdown',e=>{const n=e.target.closest('.node');if(!n)return;drag=n.dataset.s;svgEl.setPointerCapture(e.pointerId);e.preventDefault()});
+svgEl.addEventListener('pointermove',e=>{if(!drag)return;const pt=svgEl.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const q=pt.matrixTransform(svgEl.getScreenCTM().inverse());POS[drag]=[Math.min(VW-25,Math.max(25,q.x)),Math.min(VH-25,Math.max(25,q.y))];draw(...LA)});
+svgEl.addEventListener('pointerup',()=>{drag=null});
 loadPreset(PRE[0]);
 </script>
 </body>
