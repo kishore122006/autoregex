@@ -22,6 +22,5 @@ The current state circle lights up.
 
 How to run:
 Open index.html in a browser
-The transition arrow pulses.
-The string input displays a moving cursor showing the current read index.
+the current read index.
 Verdict Banner: Clear display indicating whether the string reached a final state (Accepted) or ended in a non-final/trap state (Rejected).
