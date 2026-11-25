@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AutoRegex – DFA/NFA Simulator</title>
+<title>AutoRegex \u2013 DFA/NFA Simulator</title>
 <style>
 :root{--bg:#f4f5fb;--card:#fff;--tx:#1b1f2a;--mut:#6b7280;--bd:#d9dce6;--ac:#4f46e5;--ok:#16a34a;--no:#dc2626;--hot:#f59e0b;--st:#eef0ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1220;--card:#181c2e;--tx:#e8eaf3;--mut:#9aa3b8;--bd:#2c3250;--ac:#818cf8;--st:#232a4a}}
@@ -89,6 +89,12 @@ svg{width:100%;height:auto;display:block}
 .pill-ok{display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(22,163,74,.16);color:var(--ok);font-weight:700;font-size:12px}
 .pill-no{display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(220,38,38,.16);color:var(--no);font-weight:700;font-size:12px}
 .speed-box{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--mut);margin-left:auto}
+
+.algo-out{margin-top:10px;background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:10px;font-size:13px}
+.algo-meta{color:var(--mut);margin-bottom:8px;font-size:12.5px}
+.algo-tbl th,.algo-tbl td{padding:4px 7px;font-size:12.5px}
+.part-box{margin-top:8px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--mut)}
+.part-box div{margin:2px 0}
 </style>
 </head>
 <body>
@@ -96,13 +102,13 @@ svg{width:100%;height:auto;display:block}
   <div class="hero-inner">
     <div class="hero-top">
       <div>
-        <h1>Auto<span>Regex</span> – Visual DFA / NFA Simulator</h1>
+        <h1>Auto<span>Regex</span> \u2013 Visual DFA / NFA Simulator</h1>
         <p>Design finite automata or compile regular expressions, step forward &amp; backward through traces, and verify batch test suites.</p>
       </div>
-      <button id="theme">◐ Light / Dark</button>
+      <button id="theme">\u25d0 Light / Dark</button>
     </div>
     <div class="step-pills">
-      <div class="step-pill"><b>1</b><div><span>1 Define</span><small>Configure states, alphabet &amp; δ transitions or compile Regex</small></div></div>
+      <div class="step-pill"><b>1</b><div><span>1 Define</span><small>Configure states, alphabet &amp; \u03b4 transitions or compile Regex</small></div></div>
       <div class="step-pill"><b>2</b><div><span>2 Visualize</span><small>Inspect interactive state graph &amp; live table highlights</small></div></div>
       <div class="step-pill"><b>3</b><div><span>3 Run</span><small>Step forward/back, adjust auto-run speed &amp; test batches</small></div></div>
     </div>
@@ -115,30 +121,39 @@ svg{width:100%;height:auto;display:block}
       <h2><span class="badge">1 DEFINE</span> Automaton &amp; Transition Table</h2>
       <div class="row"><label>Preset</label><select id="pre" class="grow"></select></div>
       <div class="row"><label>Type</label><select id="mode"><option>DFA</option><option>NFA</option></select>
-        <label style="min-width:0">Σ</label><input type="text" id="alpha" maxlength="10" placeholder="01"></div>
+        <label style="min-width:0">\u03a3</label><input type="text" id="alpha" maxlength="10" placeholder="01"></div>
       <div class="row"><label>Start</label><select id="start"></select>
-        <button id="add">+ State</button><button id="del">− State</button></div>
+        <button id="add">+ State</button><button id="del">\u2212 State</button></div>
       <div class="scroll"><table id="tbl"></table></div>
-      <p class="hint">Fill δ(q, a). Active states and fired transitions glow in sync with the graph. Tick F for accepting states.</p>
+      <p class="hint">Fill \u03b4(q, a). Active states and fired transitions glow in sync with the graph. Tick F for accepting states.</p>
       <div class="row" style="margin-top:8px"><button id="save">Save</button><button id="loadb">Load saved</button></div>
     </div>
     <div class="card">
-      <h2><span class="badge">1 DEFINE</span> Regex → NFA (Thompson)</h2>
+      <h2><span class="badge">1 DEFINE</span> Regex \u2192 NFA (Thompson)</h2>
       <div class="row"><input type="text" id="re" class="grow" placeholder="(a|b)*abb" value="(a|b)*abb"><button id="rb" class="p">Build</button></div>
       <div class="err" id="err"></div>
       <p class="hint">Supports literals, ( ), | union, * + ? and implicit concatenation.</p>
     </div>
+    <div class="card">
+      <h2><span class="badge">TOC</span> Conversions &amp; Minimization</h2>
+      <div class="row">
+        <button id="nfa2dfa" class="p">NFA \u2192 DFA (Subset)</button>
+        <button id="mindfa">Minimize DFA</button>
+      </div>
+      <div class="err" id="toc-err"></div>
+      <div id="toc-out"></div>
+    </div>
   </aside>
   <main>
     <div class="card"><h2><span class="badge">2 VISUALIZE</span> State Graph</h2>
-      <div class="row"><label>Layout</label><select id="lay"><option value="circle">Circle</option><option value="lr">Left → Right</option></select><span class="hint" style="margin:0">Drag any state to move it.</span></div>
+      <div class="row"><label>Layout</label><select id="lay"><option value="circle">Circle</option><option value="lr">Left \u2192 Right</option></select><span class="hint" style="margin:0">Drag any state to move it.</span></div>
       <svg id="g" viewBox="0 0 760 520"></svg>
-      <div class="legend"><span><i style="background:var(--hot)"></i>current state</span><span><i style="background:var(--ok)"></i>accepted</span><span><i style="background:var(--no)"></i>rejected</span><span><i class="dbl"></i>accepting state</span><span>→ start state</span></div></div>
+      <div class="legend"><span><i style="background:var(--hot)"></i>current state</span><span><i style="background:var(--ok)"></i>accepted</span><span><i style="background:var(--no)"></i>rejected</span><span><i class="dbl"></i>accepting state</span><span>\u2192 start state</span></div></div>
     <div class="card">
       <h2><span class="badge">3 RUN</span> Step-by-Step Execution</h2>
       <div class="row"><input type="text" id="inp" class="grow" placeholder="e.g. 100101" autocomplete="off" spellcheck="false">
-        <button id="prev">◀ Step Back</button>
-        <button id="next" class="p">Next Step ▶</button>
+        <button id="prev">\u25c0 Step Back</button>
+        <button id="next" class="p">Next Step \u25b6</button>
         <button id="run">Run All</button>
         <button id="reset">Reset</button>
       </div>
@@ -156,7 +171,7 @@ svg{width:100%;height:auto;display:block}
     <div class="card">
       <h2><span class="badge">3 RUN</span> Batch Test-Case Suite</h2>
       <div class="row">
-        <input type="text" id="tc-in" class="grow" placeholder="Add test strings (comma-separated, e.g. 01, 101, 110, ε)" autocomplete="off">
+        <input type="text" id="tc-in" class="grow" placeholder="Add test strings (comma-separated, e.g. 01, 101, 110, \u03b5)" autocomplete="off">
         <button id="tc-add" class="p">+ Add</button>
         <button id="tc-clear">Clear</button>
       </div>
@@ -180,7 +195,7 @@ const PRE=[
  {n:'Strings ending with ab (NFA)',m:'NFA',a:'ab',s:['q0','q1','q2'],st:'q0',f:['q2'],t:'aabab',tests:['ab','aabab','bab','aba','b'],d:{'q0,a':'q0,q1','q0,b':'q0','q1,b':'q2'}},
  {n:'a*b* with \u03b5-move (\u03b5-NFA)',m:'NFA',a:'ab',s:['q0','q1'],st:'q0',f:['q1'],t:'aabb',tests:['','aaa','bbb','aabb','ba'],d:{'q0,a':'q0','q0,\u03b5':'q1','q1,b':'q1'}}
 ];
-let M,steps=[],pos=0,W=[],timer=null,POS={},LAYOUT='circle',LA=[],VW=760,VH=520,drag=null,testCases=[];
+let M,steps=[],pos=0,W=[],timer=null,POS={},LAYOUT='circle',LA=[],VW=760,VH=520,drag=null,testCases=[],builtAutomaton=null;
 const cols=()=>[...M.alpha,...(M.mode==='NFA'?[EPS]:[])];
 const fmt=s=>s.size?'{'+[...s].join(', ')+'}':'\u2205';
 
@@ -191,6 +206,7 @@ function loadPreset(p){
   for(const k in p.d){const [s,a]=k.split(',');M.d[s][a]=p.d[k].split(',')}
   $('inp').value=p.t;
   testCases=[...(p.tests||[p.t])];
+  builtAutomaton=null;$('toc-out').innerHTML='';$('toc-err').textContent='';
   fullRender();
 }
 function fullRender(){
@@ -278,6 +294,134 @@ function regexToNFA(src){
 $('rb').onclick=()=>{
   try{const r=$('re').value.trim();if(!r)throw Error('Enter a regular expression');M=regexToNFA(r);POS={};LAYOUT='lr';$('lay').value='lr';$('err').textContent='';fullRender()}
   catch(e){$('err').textContent=e.message}
+};
+
+/* ---------- NFA -> DFA (Subset Construction) ---------- */
+function subsetConstruct(nfa){
+  const alpha=[...nfa.alpha];
+  const eclose=set=>{
+    const r=new Set(set),st=[...set];
+    while(st.length){const s=st.pop();for(const t of(nfa.d[s]&&nfa.d[s][EPS])||[])if(!r.has(t)){r.add(t);st.push(t)}}
+    return [...r].sort();
+  };
+  const keyOf=arr=>arr.join(',');
+  const startSet=eclose([nfa.start]);
+  const subsets=[startSet],seen=new Map([[keyOf(startSet),0]]),rows=[];
+  for(let idx=0;idx<subsets.length;idx++){
+    const cur=subsets[idx],rObj={idx,name:'S'+idx,subset:cur,trans:{}};
+    for(const a of alpha){
+      const moved=new Set();
+      for(const s of cur)for(const t of(nfa.d[s]&&nfa.d[s][a])||[])moved.add(t);
+      const nextSet=eclose(moved);
+      const k=keyOf(nextSet);
+      if(!seen.has(k)){seen.set(k,subsets.length);subsets.push(nextSet)}
+      rObj.trans[a]='S'+seen.get(k);
+    }
+    rows.push(rObj);
+  }
+  const states=rows.map(r=>r.name);
+  const finals=new Set(rows.filter(r=>r.subset.some(s=>nfa.finals.has(s))).map(r=>r.name));
+  const d={};
+  states.forEach(s=>d[s]={});
+  rows.forEach(r=>alpha.forEach(a=>{d[r.name][a]=[r.trans[a]]}));
+  return{dfa:{mode:'DFA',alpha,states,start:'S0',finals,d},rows};
+}
+
+/* ---------- DFA Minimization (Partition Refinement) ---------- */
+function minimizeDFA(srcM){
+  if(srcM.mode!=='DFA')throw Error('Switch mode to DFA (or run NFA \u2192 DFA first) to minimize.');
+  const alpha=[...srcM.alpha];
+  // 1. Reachable states from start
+  const reach=new Set([srcM.start]),q=[srcM.start];
+  for(let i=0;i<q.length;i++){
+    const s=q[i];
+    for(const a of alpha)for(const t of(srcM.d[s]&&srcM.d[s][a])||[])if(srcM.states.includes(t)&&!reach.has(t)){reach.add(t);q.push(t)}
+  }
+  const R=srcM.states.filter(s=>reach.has(s));
+  const targetOf=(s,a)=>{const ts=(srcM.d[s]&&srcM.d[s][a])||[];return ts[0]||''};
+  let part=[R.filter(s=>!srcM.finals.has(s)),R.filter(s=>srcM.finals.has(s))].filter(g=>g.length);
+  const history=[part.map(g=>[...g])];
+
+  let changed=true;
+  while(changed){
+    changed=false;
+    const blockId=new Map();
+    part.forEach((g,bi)=>g.forEach(s=>blockId.set(s,bi)));
+    const nextPart=[];
+    for(const g of part){
+      if(g.length<=1){nextPart.push(g);continue}
+      const sigMap=new Map();
+      for(const s of g){
+        const sig=alpha.map(a=>blockId.get(targetOf(s,a))??-1).join('|');
+        if(!sigMap.has(sig))sigMap.set(sig,[]);
+        sigMap.get(sig).push(s);
+      }
+      if(sigMap.size>1)changed=true;
+      nextPart.push(...sigMap.values());
+    }
+    part=nextPart;
+    if(changed)history.push(part.map(g=>[...g]));
+  }
+
+  const stateToGroup=new Map();
+  part.forEach((g,i)=>g.forEach(s=>stateToGroup.set(s,'M'+i)));
+  const states=part.map((_,i)=>'M'+i);
+  const start=stateToGroup.get(srcM.start)||states[0];
+  const finals=new Set(part.map((g,i)=>g.some(s=>srcM.finals.has(s))?'M'+i:null).filter(Boolean));
+  const d={};
+  states.forEach(s=>d[s]={});
+  part.forEach((g,i)=>{
+    const rep=g[0],mName='M'+i;
+    for(const a of alpha){
+      const tgt=targetOf(rep,a);
+      if(tgt&&stateToGroup.has(tgt))d[mName][a]=[stateToGroup.get(tgt)];
+    }
+  });
+  return{minDfa:{mode:'DFA',alpha,states,start,finals,d},part,history,unreachableCount:srcM.states.length-R.length};
+}
+
+function renderTOCResult(html){
+  $('toc-err').textContent='';
+  $('toc-out').innerHTML=html;
+  const btn=$('load-toc-auto');
+  if(btn&&builtAutomaton){
+    btn.onclick=()=>{
+      M=builtAutomaton;POS={};LAYOUT='lr';$('lay').value='lr';
+      fullRender();
+    };
+  }
+}
+
+$('nfa2dfa').onclick=()=>{
+  try{
+    const {dfa,rows}=subsetConstruct(M);
+    builtAutomaton=dfa;
+    const trHtml=rows.map(r=>{
+      const isF=[...dfa.finals].includes(r.name);
+      return `<tr><td><b>${esc(r.name)}</b>${r.name===dfa.start?' \u2192':''}${isF?' (F)':''}</td><td style="font-family:ui-monospace,Menlo,monospace">${esc(r.subset.length?`{${r.subset.join(',')}}`:'\u2205')}</td>`+
+        dfa.alpha.map(a=>`<td>${esc(r.trans[a]||'\u2205')}</td>`).join('')+'</tr>';
+    }).join('');
+    renderTOCResult(`<div class="algo-out">
+      <div class="algo-meta"><b>Subset Construction:</b> ${rows.length} DFA state${rows.length===1?'':'s'} from ${M.states.length} NFA state${M.states.length===1?'':'s'}.</div>
+      <div class="scroll"><table class="algo-tbl"><thead><tr><th>DFA</th><th>${EPS}-Set</th>${dfa.alpha.map(a=>`<th>${esc(a)}</th>`).join('')}</tr></thead><tbody>${trHtml}</tbody></table></div>
+      <div class="row" style="margin-top:8px;margin-bottom:0"><button id="load-toc-auto" class="p">Load DFA into Simulator</button></div>
+    </div>`);
+  }catch(e){$('toc-err').textContent=e.message}
+};
+
+$('mindfa').onclick=()=>{
+  try{
+    const {minDfa,part,history,unreachableCount}=minimizeDFA(M);
+    builtAutomaton=minDfa;
+    const partHtml=history.map((h,i)=>`<div>\u03c0${i}: ${h.map(g=>`{${g.join(',')}}`).join(' ')}</div>`).join('');
+    const groupMap=part.map((g,i)=>`<tr><td><b>M${i}</b>${'M'+i===minDfa.start?' \u2192':''}${minDfa.finals.has('M'+i)?' (F)':''}</td><td style="font-family:ui-monospace,Menlo,monospace">{${g.map(esc).join(',')}}</td></tr>`).join('');
+    renderTOCResult(`<div class="algo-out">
+      <div class="algo-meta"><b>DFA Minimization:</b> ${M.states.length} \u2192 ${minDfa.states.length} state${minDfa.states.length===1?'':'s'}${unreachableCount?` (${unreachableCount} unreachable pruned)`:''}.</div>
+      <div class="scroll"><table class="algo-tbl"><thead><tr><th>Min State</th><th>Equivalent States</th></tr></thead><tbody>${groupMap}</tbody></table></div>
+      <div class="part-box">${partHtml}</div>
+      <div class="row" style="margin-top:8px;margin-bottom:0"><button id="load-toc-auto" class="p">Load Minimized DFA into Simulator</button></div>
+    </div>`);
+  }catch(e){$('toc-err').textContent=e.message}
 };
 
 function layout(){
