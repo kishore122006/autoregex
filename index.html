@@ -10,24 +10,45 @@
 :root[data-theme="dark"]{--bg:#0f1220;--card:#181c2e;--tx:#e8eaf3;--mut:#9aa3b8;--bd:#2c3250;--ac:#818cf8;--st:#232a4a}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-header{padding:18px 16px 0;max-width:1240px;margin:auto}
-h1{margin:0;font-size:22px}h1 span{color:var(--ac)}
-header p{margin:2px 0 0;color:var(--mut)}
-.wrap{max-width:1240px;margin:auto;padding:16px;display:grid;grid-template-columns:370px 1fr;gap:16px;align-items:start}
+
+.hero{background:linear-gradient(135deg,#312e81 0%,#4f46e5 55%,#7c3aed 100%);color:#fff;padding:24px 16px 28px;border-bottom:1px solid rgba(255,255,255,.15)}
+.hero-inner{max-width:1240px;margin:auto}
+.hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.hero h1{margin:0;font-size:26px;letter-spacing:-.02em}
+.hero h1 span{color:#fde68a}
+.hero p{margin:4px 0 0;color:rgba(255,255,255,.88);font-size:15px}
+.hero button#theme{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff}
+.hero button#theme:hover{background:rgba(255,255,255,.25);border-color:#fff}
+.step-pills{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+@media(max-width:720px){.step-pills{grid-template-columns:1fr}}
+.step-pill{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:10px;padding:10px 14px;display:flex;align-items:center;gap:10px;backdrop-filter:blur(4px)}
+.step-pill b{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:#fde68a;color:#1e1b4b;font-size:13px;flex-shrink:0}
+.step-pill span{font-size:13.5px;font-weight:600}
+.step-pill small{display:block;font-weight:400;font-size:12px;color:rgba(255,255,255,.8)}
+
+.wrap{max-width:1240px;margin:auto;padding:16px;display:grid;grid-template-columns:390px 1fr;gap:16px;align-items:start}
 @media(max-width:880px){.wrap{grid-template-columns:1fr}}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:16px}
-.card h2{margin:0 0 10px;font-size:15px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut)}
+.card h2{margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);display:flex;align-items:center;gap:7px}
+.badge{background:var(--ac);color:#fff;font-size:11px;padding:2px 7px;border-radius:999px;font-weight:700;letter-spacing:.03em}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
 .row label{font-size:13px;color:var(--mut);min-width:64px}
 input,select,button{font:inherit;color:inherit;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:6px 10px}
 input[type=text],.grow{flex:1;min-width:0}
+input[type=range]{padding:0;accent-color:var(--ac);cursor:pointer}
 button{cursor:pointer}button:hover:not(:disabled){border-color:var(--ac)}button:disabled{opacity:.45;cursor:default}
 button.p{background:var(--ac);border-color:var(--ac);color:#fff}
 .scroll{overflow-x:auto}
 table{border-collapse:collapse;width:100%}
-td,th{border:1px solid var(--bd);padding:3px;text-align:center;font-size:14px}
+td,th{border:1px solid var(--bd);padding:3px;text-align:center;font-size:14px;transition:background .2s,box-shadow .2s}
 th{background:var(--st);white-space:nowrap;padding:4px 8px}
 td input{width:100%;min-width:46px;box-sizing:border-box;text-align:center;padding:4px}
+
+tr.row-active th:first-child{background:rgba(245,158,11,.22);color:var(--tx);box-shadow:inset 3px 0 0 var(--hot)}
+tr.row-active td{background:rgba(245,158,11,.08)}
+td.cell-hot{background:rgba(245,158,11,.35)!important;box-shadow:inset 0 0 0 2px var(--hot)}
+td.cell-hot input{background:transparent;font-weight:700}
+
 .hint{font-size:12.5px;color:var(--mut);margin:8px 0 0}
 .err{color:var(--no);font-size:13px}
 svg{width:100%;height:auto;display:block}
@@ -62,81 +83,137 @@ svg{width:100%;height:auto;display:block}
 .banner.no{background:var(--no);border-color:var(--no);color:#fff}
 #log{margin-top:10px;max-height:190px;overflow:auto;font:13px ui-monospace,Menlo,monospace;color:var(--mut)}
 #log div:last-child{color:var(--tx);font-weight:700}
+
+.suite-tbl th,.suite-tbl td{padding:6px 8px;text-align:left;font-size:13.5px}
+.suite-tbl td:nth-child(2),.suite-tbl th:nth-child(2),.suite-tbl td:nth-child(4),.suite-tbl th:nth-child(4){text-align:center}
+.pill-ok{display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(22,163,74,.16);color:var(--ok);font-weight:700;font-size:12px}
+.pill-no{display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(220,38,38,.16);color:var(--no);font-weight:700;font-size:12px}
+.speed-box{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--mut);margin-left:auto}
 </style>
 </head>
 <body>
-<header>
-  <button id="theme" style="float:right">◐ Light / Dark</button>
-  <h1>Auto<span>Regex</span> – Visual DFA/NFA Simulator</h1>
-  <p>Build an automaton or compile a regular expression, then step through a string and watch the states light up.</p>
-</header>
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-top">
+      <div>
+        <h1>Auto<span>Regex</span> – Visual DFA / NFA Simulator</h1>
+        <p>Design finite automata or compile regular expressions, step forward &amp; backward through traces, and verify batch test suites.</p>
+      </div>
+      <button id="theme">◐ Light / Dark</button>
+    </div>
+    <div class="step-pills">
+      <div class="step-pill"><b>1</b><div><span>1 Define</span><small>Configure states, alphabet &amp; δ transitions or compile Regex</small></div></div>
+      <div class="step-pill"><b>2</b><div><span>2 Visualize</span><small>Inspect interactive state graph &amp; live table highlights</small></div></div>
+      <div class="step-pill"><b>3</b><div><span>3 Run</span><small>Step forward/back, adjust auto-run speed &amp; test batches</small></div></div>
+    </div>
+  </div>
+</div>
+
 <div class="wrap">
   <aside>
     <div class="card">
-      <h2>1 · Define automaton</h2>
+      <h2><span class="badge">1 DEFINE</span> Automaton &amp; Transition Table</h2>
       <div class="row"><label>Preset</label><select id="pre" class="grow"></select></div>
       <div class="row"><label>Type</label><select id="mode"><option>DFA</option><option>NFA</option></select>
         <label style="min-width:0">Σ</label><input type="text" id="alpha" maxlength="10" placeholder="01"></div>
       <div class="row"><label>Start</label><select id="start"></select>
         <button id="add">+ State</button><button id="del">− State</button></div>
       <div class="scroll"><table id="tbl"></table></div>
-      <p class="hint">Fill δ(q, a). In NFA mode use commas for several targets and the ε column for ε-moves. Blank means a dead state. Tick F for accepting states.</p>
+      <p class="hint">Fill δ(q, a). Active states and fired transitions glow in sync with the graph. Tick F for accepting states.</p>
       <div class="row" style="margin-top:8px"><button id="save">Save</button><button id="loadb">Load saved</button></div>
     </div>
     <div class="card">
-      <h2>Regex → NFA (Thompson)</h2>
+      <h2><span class="badge">1 DEFINE</span> Regex → NFA (Thompson)</h2>
       <div class="row"><input type="text" id="re" class="grow" placeholder="(a|b)*abb" value="(a|b)*abb"><button id="rb" class="p">Build</button></div>
       <div class="err" id="err"></div>
       <p class="hint">Supports literals, ( ), | union, * + ? and implicit concatenation.</p>
     </div>
   </aside>
   <main>
-    <div class="card"><h2>2 · State graph</h2>
+    <div class="card"><h2><span class="badge">2 VISUALIZE</span> State Graph</h2>
       <div class="row"><label>Layout</label><select id="lay"><option value="circle">Circle</option><option value="lr">Left → Right</option></select><span class="hint" style="margin:0">Drag any state to move it.</span></div>
       <svg id="g" viewBox="0 0 760 520"></svg>
       <div class="legend"><span><i style="background:var(--hot)"></i>current state</span><span><i style="background:var(--ok)"></i>accepted</span><span><i style="background:var(--no)"></i>rejected</span><span><i class="dbl"></i>accepting state</span><span>→ start state</span></div></div>
     <div class="card">
-      <h2>3 · Run a string</h2>
+      <h2><span class="badge">3 RUN</span> Step-by-Step Execution</h2>
       <div class="row"><input type="text" id="inp" class="grow" placeholder="e.g. 100101" autocomplete="off" spellcheck="false">
-        <button id="next" class="p">Next Step</button><button id="run">Run All</button><button id="reset">Reset</button></div>
+        <button id="prev">◀ Step Back</button>
+        <button id="next" class="p">Next Step ▶</button>
+        <button id="run">Run All</button>
+        <button id="reset">Reset</button>
+      </div>
+      <div class="row" style="margin-bottom:4px">
+        <div class="speed-box" style="margin-left:0">
+          <span>Speed:</span>
+          <input type="range" id="spd" min="150" max="1500" step="50" value="750" style="width:130px">
+          <span id="spdlbl" style="min-width:52px;font-family:ui-monospace,Menlo,monospace">750 ms</span>
+        </div>
+      </div>
       <div class="tape" id="tape"></div>
       <div class="banner" id="ban"></div>
       <div id="log"></div>
     </div>
+    <div class="card">
+      <h2><span class="badge">3 RUN</span> Batch Test-Case Suite</h2>
+      <div class="row">
+        <input type="text" id="tc-in" class="grow" placeholder="Add test strings (comma-separated, e.g. 01, 101, 110, ε)" autocomplete="off">
+        <button id="tc-add" class="p">+ Add</button>
+        <button id="tc-clear">Clear</button>
+      </div>
+      <div class="scroll">
+        <table class="suite-tbl">
+          <thead><tr><th>Input String</th><th>Final States</th><th>Result</th><th>Action</th></tr></thead>
+          <tbody id="tc-body"></tbody>
+        </table>
+      </div>
+      <p class="hint" id="tc-summary"></p>
+    </div>
   </main>
 </div>
 <script>
-const $=id=>document.getElementById(id),EPS='ε';
+const $=id=>document.getElementById(id),EPS='\u03b5';
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const PRE=[
- {n:'Strings ending with 01 (DFA)',m:'DFA',a:'01',s:['q0','q1','q2'],st:'q0',f:['q2'],t:'100101',d:{'q0,0':'q1','q0,1':'q0','q1,0':'q1','q1,1':'q2','q2,0':'q1','q2,1':'q0'}},
- {n:'Even number of a’s (DFA)',m:'DFA',a:'ab',s:['q0','q1'],st:'q0',f:['q0'],t:'abbab',d:{'q0,a':'q1','q0,b':'q0','q1,a':'q0','q1,b':'q1'}},
- {n:'Binary multiples of 3 (DFA)',m:'DFA',a:'01',s:['q0','q1','q2'],st:'q0',f:['q0'],t:'110',d:{'q0,0':'q0','q0,1':'q1','q1,0':'q2','q1,1':'q0','q2,0':'q1','q2,1':'q2'}},
- {n:'Strings ending with ab (NFA)',m:'NFA',a:'ab',s:['q0','q1','q2'],st:'q0',f:['q2'],t:'aabab',d:{'q0,a':'q0,q1','q0,b':'q0','q1,b':'q2'}},
- {n:'a*b* with ε-move (ε-NFA)',m:'NFA',a:'ab',s:['q0','q1'],st:'q0',f:['q1'],t:'aabb',d:{'q0,a':'q0','q0,ε':'q1','q1,b':'q1'}}
+ {n:'Strings ending with 01 (DFA)',m:'DFA',a:'01',s:['q0','q1','q2'],st:'q0',f:['q2'],t:'100101',tests:['01','100101','10','00','111'],d:{'q0,0':'q1','q0,1':'q0','q1,0':'q1','q1,1':'q2','q2,0':'q1','q2,1':'q0'}},
+ {n:'Even number of a\u2019s (DFA)',m:'DFA',a:'ab',s:['q0','q1'],st:'q0',f:['q0'],t:'abbab',tests:['','bb','aa','abbab','aba','baba'],d:{'q0,a':'q1','q0,b':'q0','q1,a':'q0','q1,b':'q1'}},
+ {n:'Binary multiples of 3 (DFA)',m:'DFA',a:'01',s:['q0','q1','q2'],st:'q0',f:['q0'],t:'110',tests:['0','11','110','1001','10','101'],d:{'q0,0':'q0','q0,1':'q1','q1,0':'q2','q1,1':'q0','q2,0':'q1','q2,1':'q2'}},
+ {n:'Strings ending with ab (NFA)',m:'NFA',a:'ab',s:['q0','q1','q2'],st:'q0',f:['q2'],t:'aabab',tests:['ab','aabab','bab','aba','b'],d:{'q0,a':'q0,q1','q0,b':'q0','q1,b':'q2'}},
+ {n:'a*b* with \u03b5-move (\u03b5-NFA)',m:'NFA',a:'ab',s:['q0','q1'],st:'q0',f:['q1'],t:'aabb',tests:['','aaa','bbb','aabb','ba'],d:{'q0,a':'q0','q0,\u03b5':'q1','q1,b':'q1'}}
 ];
-let M,steps=[],pos=0,W=[],timer=null,POS={},LAYOUT='circle',LA=[],VW=760,VH=520,drag=null;
+let M,steps=[],pos=0,W=[],timer=null,POS={},LAYOUT='circle',LA=[],VW=760,VH=520,drag=null,testCases=[];
 const cols=()=>[...M.alpha,...(M.mode==='NFA'?[EPS]:[])];
-const fmt=s=>s.size?'{'+[...s].join(', ')+'}':'∅';
+const fmt=s=>s.size?'{'+[...s].join(', ')+'}':'\u2205';
 
 function loadPreset(p){
   POS={};LAYOUT='circle';$('lay').value='circle';
   M={mode:p.m,alpha:p.a.split(''),states:[...p.s],start:p.st,finals:new Set(p.f),d:{}};
   p.s.forEach(s=>M.d[s]={});
   for(const k in p.d){const [s,a]=k.split(',');M.d[s][a]=p.d[k].split(',')}
-  $('inp').value=p.t;fullRender();
+  $('inp').value=p.t;
+  testCases=[...(p.tests||[p.t])];
+  fullRender();
 }
 function fullRender(){
   $('mode').value=M.mode;$('alpha').value=M.alpha.join('');
   const c=cols();
-  let h='<tr><th>δ</th>'+c.map(x=>`<th>${esc(x)}</th>`).join('')+'<th>F</th></tr>';
+  let h='<tr><th>\u03b4</th>'+c.map(x=>`<th>${esc(x)}</th>`).join('')+'<th>F</th></tr>';
   M.states.forEach(s=>{
-    h+=`<tr><th>${s===M.start?'→ ':''}${esc(s)}</th>`+c.map(a=>`<td><input data-s="${esc(s)}" data-a="${esc(a)}" value="${esc((M.d[s]&&M.d[s][a]||[]).join(','))}"></td>`).join('')
+    h+=`<tr data-row="${esc(s)}"><th>${s===M.start?'\u2192 ':''}${esc(s)}</th>`+c.map(a=>`<td data-s="${esc(s)}" data-a="${esc(a)}"><input data-s="${esc(s)}" data-a="${esc(a)}" value="${esc((M.d[s]&&M.d[s][a]||[]).join(','))}"></td>`).join('')
       +`<td><input type="checkbox" data-f="${esc(s)}" ${M.finals.has(s)?'checked':''}></td></tr>`;
   });
   $('tbl').innerHTML=h;
   $('start').innerHTML=M.states.map(s=>`<option ${s===M.start?'selected':''}>${esc(s)}</option>`).join('');
   resetSim();
+  runSuite();
+}
+function highlightTable(activeSet,hotCells){
+  document.querySelectorAll('#tbl tr[data-row]').forEach(tr=>{
+    tr.classList.toggle('row-active',activeSet.has(tr.dataset.row));
+  });
+  const hotSet=new Set((hotCells||[]).map(([s,a])=>s+'|'+a));
+  document.querySelectorAll('#tbl td[data-s]').forEach(td=>{
+    td.classList.toggle('cell-hot',hotSet.has(td.dataset.s+'|'+td.dataset.a));
+  });
 }
 $('tbl').onchange=e=>{
   const t=e.target;
@@ -147,6 +224,7 @@ $('tbl').onchange=e=>{
     M.d[t.dataset.s][t.dataset.a]=v;t.value=v.join(',');
   }
   resetSim();
+  runSuite();
 };
 $('pre').innerHTML=PRE.map((p,i)=>`<option value="${i}">${esc(p.n)}</option>`).join('');
 $('pre').onchange=()=>loadPreset(PRE[$('pre').value]);
@@ -164,10 +242,9 @@ $('del').onclick=()=>{
   for(const q in M.d)for(const a in M.d[q])M.d[q][a]=M.d[q][a].filter(t=>t!==s);
   if(M.start===s)M.start=M.states[0];fullRender();
 };
-$('save').onclick=()=>{try{localStorage.setItem('autoregex',JSON.stringify({...M,finals:[...M.finals]}))}catch(e){}};
-$('loadb').onclick=()=>{try{const j=JSON.parse(localStorage.getItem('autoregex'));if(j){j.finals=new Set(j.finals);M=j;POS={};fullRender()}}catch(e){}};
+$('save').onclick=()=>{try{localStorage.setItem('autoregex',JSON.stringify({...M,finals:[...M.finals],testCases}))}catch(e){}};
+$('loadb').onclick=()=>{try{const j=JSON.parse(localStorage.getItem('autoregex'));if(j){j.finals=new Set(j.finals);if(Array.isArray(j.testCases))testCases=j.testCases;M=j;POS={};fullRender()}}catch(e){}};
 
-/* ---------- Regex -> NFA (Thompson construction) ---------- */
 function regexToNFA(src){
   let i=0,n=0;const tr=[],ns=()=>n++;
   function alt(){let f=cat();while(src[i]==='|'){i++;const g=cat(),s=ns(),e=ns();tr.push([s,EPS,f.s],[s,EPS,g.s],[f.e,EPS,e],[g.e,EPS,e]);f={s,e}}return f}
@@ -203,7 +280,6 @@ $('rb').onclick=()=>{
   catch(e){$('err').textContent=e.message}
 };
 
-/* ---------- Graph drawing ---------- */
 function layout(){
   const n=M.states.length,P={},dp={};
   if(LAYOUT==='lr'){
@@ -257,56 +333,125 @@ function draw(active=new Set(),hot=[],v=null){
   $('g').setAttribute('viewBox',`0 0 ${VW} ${VH}`);$('g').innerHTML=o+lab;
 }
 
-/* ---------- Simulation ---------- */
 function closure(set){
-  if(M.mode!=='NFA')return{set,edges:[]};
-  const r=new Set(set),edges=[],st=[...set];
-  while(st.length){const s=st.pop();for(const t of(M.d[s]&&M.d[s][EPS])||[]){edges.push([s,t]);if(!r.has(t)){r.add(t);st.push(t)}}}
-  return{set:r,edges};
+  if(M.mode!=='NFA')return{set,edges:[],cells:[]};
+  const r=new Set(set),edges=[],cells=[],st=[...set];
+  while(st.length){const s=st.pop();for(const t of(M.d[s]&&M.d[s][EPS])||[]){edges.push([s,t]);cells.push([s,EPS]);if(!r.has(t)){r.add(t);st.push(t)}}}
+  return{set:r,edges,cells};
 }
-function build(){
-  W=[...$('inp').value];
+function simulateWord(word){
+  const chars=[...word];
   const c0=closure(new Set([M.start]));
-  steps=[{set:c0.set,edges:c0.edges,log:M.mode==='NFA'?`Start: ε-closure({${M.start}}) = ${fmt(c0.set)}`:`Start at ${M.start}`}];
+  const trace=[{set:c0.set,edges:c0.edges,cells:c0.cells,log:M.mode==='NFA'?`Start: ${EPS}-closure({${M.start}}) = ${fmt(c0.set)}`:`Start at ${M.start}`}];
   let cur=c0.set;
-  for(const ch of W){
-    const mv=new Set(),ed=[];
+  for(const ch of chars){
+    const mv=new Set(),ed=[],cl=[];
     if(M.alpha.includes(ch))for(const s of cur){
       let ts=(M.d[s]&&M.d[s][ch])||[];if(M.mode==='DFA')ts=ts.slice(0,1);
+      if(ts.length)cl.push([s,ch]);
       ts.forEach(t=>{mv.add(t);ed.push([s,t])});
     }
     const c=closure(mv);
-    steps.push({set:c.set,edges:[...ed,...c.edges],dead:!c.set.size,
-      log:`δ(${fmt(cur)}, ${ch}) = ${fmt(c.set)}`+(M.alpha.includes(ch)?'':`  ('${ch}' is not in Σ)`)+(c.set.size?'':'  → dead state')});
+    trace.push({set:c.set,edges:[...ed,...c.edges],cells:[...cl,...c.cells],dead:!c.set.size,
+      log:`\u03b4(${fmt(cur)}, ${ch}) = ${fmt(c.set)}`+(M.alpha.includes(ch)?'':`  ('${ch}' is not in \u03a3)`)+(c.set.size?'':'  \u2192 dead state')});
     cur=c.set;if(!cur.size)break;
   }
+  const last=trace[trace.length-1];
+  const accepted=!last.dead&&trace.length-1===chars.length&&[...last.set].some(x=>M.finals.has(x));
+  return{chars,trace,accepted,finalSet:last.set};
+}
+function build(){
+  const res=simulateWord($('inp').value);
+  W=res.chars;
+  steps=res.trace;
 }
 function show(){
   const s=steps[pos],end=pos===steps.length-1&&(!!s.dead||pos===W.length),acc=end&&[...s.set].some(x=>M.finals.has(x));
-  $('tape').innerHTML=W.length?W.map((c,j)=>`<span class="${j<pos?'dn':j===pos?'cur':''}">${esc(c)}</span>`).join(''):'<span style="width:auto;padding:0 12px">ε (empty string)</span>';
+  $('tape').innerHTML=W.length?W.map((c,j)=>`<span class="${j<pos?'dn':j===pos?'cur':''}">${esc(c)}</span>`).join(''):`<span style="width:auto;padding:0 12px">${EPS} (empty string)</span>`;
   draw(s.set,s.edges,end?(acc?'ok':'no'):null);
+  highlightTable(s.set,s.cells);
   const b=$('ban');
   b.className='banner'+(end?(acc?' ok':' no'):'');
-  b.textContent=end?(acc?'✔ ACCEPTED – ended in an accepting state':'✘ REJECTED – '+(s.set.size?'ended in a non-accepting state':'no transition available (trap / dead state)')):pos===0?'Ready – press Next Step':`Read ${pos} of ${W.length} symbols…`;
+  b.textContent=end?(acc?'\u2714 ACCEPTED \u2013 ended in an accepting state':'\u2718 REJECTED \u2013 '+(s.set.size?'ended in a non-accepting state':'no transition available (trap / dead state)')):pos===0?'Ready \u2013 press Next Step':`Read ${pos} of ${W.length} symbols\u2026`;
   $('log').innerHTML=steps.slice(0,pos+1).map(x=>`<div>${esc(x.log)}</div>`).join('');
   $('log').scrollTop=1e6;
+  $('prev').disabled=pos===0;
   $('next').disabled=end;
   if(end)stop();
 }
+function getSpeed(){return Number($('spd').value)||750}
+function startTimer(){clearInterval(timer);timer=setInterval(next,getSpeed())}
 function stop(){clearInterval(timer);timer=null;$('run').textContent='Run All'}
 function resetSim(){stop();pos=0;build();show()}
+function prev(){if(pos>0){pos--;show()}}
 function next(){if(pos<steps.length-1){pos++;show()}}
+$('prev').onclick=()=>{stop();prev()};
 $('next').onclick=()=>{stop();next()};
 $('reset').onclick=resetSim;
 $('run').onclick=()=>{
   if(timer){stop();return}
   if(pos===steps.length-1)resetSim();
   $('run').textContent='Pause';next();
-  if(!$('next').disabled)timer=setInterval(next,750);
+  if(!$('next').disabled)startTimer();
+};
+$('spd').oninput=()=>{
+  $('spdlbl').textContent=getSpeed()+' ms';
+  if(timer)startTimer();
 };
 $('inp').oninput=resetSim;
 $('lay').onchange=()=>{LAYOUT=$('lay').value;POS={};resetSim()};
 $('theme').onclick=()=>{const r=document.documentElement,dk=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;r.dataset.theme=dk?'light':'dark'};
+
+function runSuite(){
+  const body=$('tc-body');
+  if(!testCases.length){
+    body.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--mut);padding:10px">No test cases yet. Add strings above to run a batch check.</td></tr>';
+    $('tc-summary').textContent='';
+    return;
+  }
+  let passCount=0;
+  body.innerHTML=testCases.map((str,idx)=>{
+    const res=simulateWord(str);
+    if(res.accepted)passCount++;
+    const label=str===''?`${EPS} (empty)`:esc(str);
+    return `<tr>
+      <td style="font-family:ui-monospace,Menlo,monospace">${label}</td>
+      <td style="font-family:ui-monospace,Menlo,monospace">${esc(fmt(res.finalSet))}</td>
+      <td>${res.accepted?'<span class="pill-ok">\u2714 ACCEPTED</span>':'<span class="pill-no">\u2718 REJECTED</span>'}</td>
+      <td>
+        <button data-load-tc="${idx}" title="Load into Step Runner" style="padding:2px 8px;font-size:12px">Step</button>
+        <button data-del-tc="${idx}" title="Remove" style="padding:2px 7px;font-size:12px">\u2715</button>
+      </td>
+    </tr>`;
+  }).join('');
+  $('tc-summary').textContent=`Summary: ${passCount} accepted, ${testCases.length-passCount} rejected out of ${testCases.length} test string${testCases.length===1?'':'s'}.`;
+}
+function addTestCases(){
+  const raw=$('tc-in').value;
+  if(!raw.trim())return;
+  const items=raw.split(',').map(s=>{const t=s.trim();return(t===EPS||t==='""'||t==="''")?'':t});
+  testCases.push(...items);
+  $('tc-in').value='';
+  runSuite();
+}
+$('tc-add').onclick=addTestCases;
+$('tc-in').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();addTestCases()}};
+$('tc-clear').onclick=()=>{testCases=[];runSuite()};
+$('tc-body').onclick=e=>{
+  const loadIdx=e.target.dataset.loadTc;
+  if(loadIdx!==undefined){
+    $('inp').value=testCases[Number(loadIdx)];
+    resetSim();
+    $('inp').scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  const delIdx=e.target.dataset.delTc;
+  if(delIdx!==undefined){
+    testCases.splice(Number(delIdx),1);
+    runSuite();
+  }
+};
+
 const svgEl=$('g');
 svgEl.addEventListener('pointerdown',e=>{const n=e.target.closest('.node');if(!n)return;drag=n.dataset.s;svgEl.setPointerCapture(e.pointerId);e.preventDefault()});
 svgEl.addEventListener('pointermove',e=>{if(!drag)return;const pt=svgEl.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;const q=pt.matrixTransform(svgEl.getScreenCTM().inverse());POS[drag]=[Math.min(VW-25,Math.max(25,q.x)),Math.min(VH-25,Math.max(25,q.y))];draw(...LA)});
