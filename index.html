@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>AutoRegex \u2013 DFA/NFA Simulator</title>
+<title>AutoRegex – DFA/NFA Simulator</title>
 <style>
 :root{--bg:#f4f5fb;--card:#fff;--tx:#1b1f2a;--mut:#6b7280;--bd:#d9dce6;--ac:#4f46e5;--ok:#16a34a;--no:#dc2626;--hot:#f59e0b;--st:#eef0ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1220;--card:#181c2e;--tx:#e8eaf3;--mut:#9aa3b8;--bd:#2c3250;--ac:#818cf8;--st:#232a4a}}
@@ -102,13 +102,13 @@ svg{width:100%;height:auto;display:block}
   <div class="hero-inner">
     <div class="hero-top">
       <div>
-        <h1>Auto<span>Regex</span> \u2013 Visual DFA / NFA Simulator</h1>
+        <h1>Auto<span>Regex</span> – Visual DFA / NFA Simulator</h1>
         <p>Design finite automata or compile regular expressions, step forward &amp; backward through traces, and verify batch test suites.</p>
       </div>
-      <button id="theme">\u25d0 Light / Dark</button>
+      <button id="theme">◐ Light / Dark</button>
     </div>
     <div class="step-pills">
-      <div class="step-pill"><b>1</b><div><span>1 Define</span><small>Configure states, alphabet &amp; \u03b4 transitions or compile Regex</small></div></div>
+      <div class="step-pill"><b>1</b><div><span>1 Define</span><small>Configure states, alphabet &amp; δ transitions or compile Regex</small></div></div>
       <div class="step-pill"><b>2</b><div><span>2 Visualize</span><small>Inspect interactive state graph &amp; live table highlights</small></div></div>
       <div class="step-pill"><b>3</b><div><span>3 Run</span><small>Step forward/back, adjust auto-run speed &amp; test batches</small></div></div>
     </div>
@@ -121,15 +121,15 @@ svg{width:100%;height:auto;display:block}
       <h2><span class="badge">1 DEFINE</span> Automaton &amp; Transition Table</h2>
       <div class="row"><label>Preset</label><select id="pre" class="grow"></select></div>
       <div class="row"><label>Type</label><select id="mode"><option>DFA</option><option>NFA</option></select>
-        <label style="min-width:0">\u03a3</label><input type="text" id="alpha" maxlength="10" placeholder="01"></div>
+        <label style="min-width:0">Σ</label><input type="text" id="alpha" maxlength="10" placeholder="01"></div>
       <div class="row"><label>Start</label><select id="start"></select>
-        <button id="add">+ State</button><button id="del">\u2212 State</button></div>
+        <button id="add">+ State</button><button id="del">− State</button></div>
       <div class="scroll"><table id="tbl"></table></div>
-      <p class="hint">Fill \u03b4(q, a). Active states and fired transitions glow in sync with the graph. Tick F for accepting states.</p>
+      <p class="hint">Fill δ(q, a). Active states and fired transitions glow in sync with the graph. Tick F for accepting states.</p>
       <div class="row" style="margin-top:8px"><button id="save">Save</button><button id="loadb">Load saved</button></div>
     </div>
     <div class="card">
-      <h2><span class="badge">1 DEFINE</span> Regex \u2192 NFA (Thompson)</h2>
+      <h2><span class="badge">1 DEFINE</span> Regex → NFA (Thompson)</h2>
       <div class="row"><input type="text" id="re" class="grow" placeholder="(a|b)*abb" value="(a|b)*abb"><button id="rb" class="p">Build</button></div>
       <div class="err" id="err"></div>
       <p class="hint">Supports literals, ( ), | union, * + ? and implicit concatenation.</p>
@@ -137,7 +137,7 @@ svg{width:100%;height:auto;display:block}
     <div class="card">
       <h2><span class="badge">TOC</span> Conversions &amp; Minimization</h2>
       <div class="row">
-        <button id="nfa2dfa" class="p">NFA \u2192 DFA (Subset)</button>
+        <button id="nfa2dfa" class="p">NFA → DFA (Subset)</button>
         <button id="mindfa">Minimize DFA</button>
       </div>
       <div class="err" id="toc-err"></div>
@@ -146,14 +146,14 @@ svg{width:100%;height:auto;display:block}
   </aside>
   <main>
     <div class="card"><h2><span class="badge">2 VISUALIZE</span> State Graph</h2>
-      <div class="row"><label>Layout</label><select id="lay"><option value="circle">Circle</option><option value="lr">Left \u2192 Right</option></select><span class="hint" style="margin:0">Drag any state to move it.</span></div>
+      <div class="row"><label>Layout</label><select id="lay"><option value="circle">Circle</option><option value="lr">Left → Right</option></select><span class="hint" style="margin:0">Drag any state to move it.</span></div>
       <svg id="g" viewBox="0 0 760 520"></svg>
-      <div class="legend"><span><i style="background:var(--hot)"></i>current state</span><span><i style="background:var(--ok)"></i>accepted</span><span><i style="background:var(--no)"></i>rejected</span><span><i class="dbl"></i>accepting state</span><span>\u2192 start state</span></div></div>
+      <div class="legend"><span><i style="background:var(--hot)"></i>current state</span><span><i style="background:var(--ok)"></i>accepted</span><span><i style="background:var(--no)"></i>rejected</span><span><i class="dbl"></i>accepting state</span><span>→ start state</span></div></div>
     <div class="card">
       <h2><span class="badge">3 RUN</span> Step-by-Step Execution</h2>
       <div class="row"><input type="text" id="inp" class="grow" placeholder="e.g. 100101" autocomplete="off" spellcheck="false">
-        <button id="prev">\u25c0 Step Back</button>
-        <button id="next" class="p">Next Step \u25b6</button>
+        <button id="prev">◀ Step Back</button>
+        <button id="next" class="p">Next Step ▶</button>
         <button id="run">Run All</button>
         <button id="reset">Reset</button>
       </div>
@@ -171,7 +171,7 @@ svg{width:100%;height:auto;display:block}
     <div class="card">
       <h2><span class="badge">3 RUN</span> Batch Test-Case Suite</h2>
       <div class="row">
-        <input type="text" id="tc-in" class="grow" placeholder="Add test strings (comma-separated, e.g. 01, 101, 110, \u03b5)" autocomplete="off">
+        <input type="text" id="tc-in" class="grow" placeholder="Add test strings (comma-separated, e.g. 01, 101, 110, ε)" autocomplete="off">
         <button id="tc-add" class="p">+ Add</button>
         <button id="tc-clear">Clear</button>
       </div>
@@ -296,7 +296,6 @@ $('rb').onclick=()=>{
   catch(e){$('err').textContent=e.message}
 };
 
-/* ---------- NFA -> DFA (Subset Construction) ---------- */
 function subsetConstruct(nfa){
   const alpha=[...nfa.alpha];
   const eclose=set=>{
@@ -327,11 +326,9 @@ function subsetConstruct(nfa){
   return{dfa:{mode:'DFA',alpha,states,start:'S0',finals,d},rows};
 }
 
-/* ---------- DFA Minimization (Partition Refinement) ---------- */
 function minimizeDFA(srcM){
   if(srcM.mode!=='DFA')throw Error('Switch mode to DFA (or run NFA \u2192 DFA first) to minimize.');
   const alpha=[...srcM.alpha];
-  // 1. Reachable states from start
   const reach=new Set([srcM.start]),q=[srcM.start];
   for(let i=0;i<q.length;i++){
     const s=q[i];
@@ -398,8 +395,8 @@ $('nfa2dfa').onclick=()=>{
     builtAutomaton=dfa;
     const trHtml=rows.map(r=>{
       const isF=[...dfa.finals].includes(r.name);
-      return `<tr><td><b>${esc(r.name)}</b>${r.name===dfa.start?' \u2192':''}${isF?' (F)':''}</td><td style="font-family:ui-monospace,Menlo,monospace">${esc(r.subset.length?`{${r.subset.join(',')}}`:'\u2205')}</td>`+
-        dfa.alpha.map(a=>`<td>${esc(r.trans[a]||'\u2205')}</td>`).join('')+'</tr>';
+      return `<tr><td><b>${esc(r.name)}</b>${r.name===dfa.start?' →':''}${isF?' (F)':''}</td><td style="font-family:ui-monospace,Menlo,monospace">${esc(r.subset.length?`{${r.subset.join(',')}}`:'∅')}</td>`+
+        dfa.alpha.map(a=>`<td>${esc(r.trans[a]||'∅')}</td>`).join('')+'</tr>';
     }).join('');
     renderTOCResult(`<div class="algo-out">
       <div class="algo-meta"><b>Subset Construction:</b> ${rows.length} DFA state${rows.length===1?'':'s'} from ${M.states.length} NFA state${M.states.length===1?'':'s'}.</div>
@@ -413,10 +410,10 @@ $('mindfa').onclick=()=>{
   try{
     const {minDfa,part,history,unreachableCount}=minimizeDFA(M);
     builtAutomaton=minDfa;
-    const partHtml=history.map((h,i)=>`<div>\u03c0${i}: ${h.map(g=>`{${g.join(',')}}`).join(' ')}</div>`).join('');
-    const groupMap=part.map((g,i)=>`<tr><td><b>M${i}</b>${'M'+i===minDfa.start?' \u2192':''}${minDfa.finals.has('M'+i)?' (F)':''}</td><td style="font-family:ui-monospace,Menlo,monospace">{${g.map(esc).join(',')}}</td></tr>`).join('');
+    const partHtml=history.map((h,i)=>`<div>π${i}: ${h.map(g=>`{${g.join(',')}}`).join(' ')}</div>`).join('');
+    const groupMap=part.map((g,i)=>`<tr><td><b>M${i}</b>${'M'+i===minDfa.start?' →':''}${minDfa.finals.has('M'+i)?' (F)':''}</td><td style="font-family:ui-monospace,Menlo,monospace">{${g.map(esc).join(',')}}</td></tr>`).join('');
     renderTOCResult(`<div class="algo-out">
-      <div class="algo-meta"><b>DFA Minimization:</b> ${M.states.length} \u2192 ${minDfa.states.length} state${minDfa.states.length===1?'':'s'}${unreachableCount?` (${unreachableCount} unreachable pruned)`:''}.</div>
+      <div class="algo-meta"><b>DFA Minimization:</b> ${M.states.length} → ${minDfa.states.length} state${minDfa.states.length===1?'':'s'}${unreachableCount?` (${unreachableCount} unreachable pruned)`:''}.</div>
       <div class="scroll"><table class="algo-tbl"><thead><tr><th>Min State</th><th>Equivalent States</th></tr></thead><tbody>${groupMap}</tbody></table></div>
       <div class="part-box">${partHtml}</div>
       <div class="row" style="margin-top:8px;margin-bottom:0"><button id="load-toc-auto" class="p">Load Minimized DFA into Simulator</button></div>
@@ -497,7 +494,7 @@ function simulateWord(word){
     }
     const c=closure(mv);
     trace.push({set:c.set,edges:[...ed,...c.edges],cells:[...cl,...c.cells],dead:!c.set.size,
-      log:`\u03b4(${fmt(cur)}, ${ch}) = ${fmt(c.set)}`+(M.alpha.includes(ch)?'':`  ('${ch}' is not in \u03a3)`)+(c.set.size?'':'  \u2192 dead state')});
+      log:`δ(${fmt(cur)}, ${ch}) = ${fmt(c.set)}`+(M.alpha.includes(ch)?'':`  ('${ch}' is not in Σ)`)+(c.set.size?'':'  → dead state')});
     cur=c.set;if(!cur.size)break;
   }
   const last=trace[trace.length-1];
@@ -516,7 +513,7 @@ function show(){
   highlightTable(s.set,s.cells);
   const b=$('ban');
   b.className='banner'+(end?(acc?' ok':' no'):'');
-  b.textContent=end?(acc?'\u2714 ACCEPTED \u2013 ended in an accepting state':'\u2718 REJECTED \u2013 '+(s.set.size?'ended in a non-accepting state':'no transition available (trap / dead state)')):pos===0?'Ready \u2013 press Next Step':`Read ${pos} of ${W.length} symbols\u2026`;
+  b.textContent=end?(acc?'✔ ACCEPTED – ended in an accepting state':'✘ REJECTED – '+(s.set.size?'ended in a non-accepting state':'no transition available (trap / dead state)')):pos===0?'Ready – press Next Step':`Read ${pos} of ${W.length} symbols…`;
   $('log').innerHTML=steps.slice(0,pos+1).map(x=>`<div>${esc(x.log)}</div>`).join('');
   $('log').scrollTop=1e6;
   $('prev').disabled=pos===0;
@@ -561,10 +558,10 @@ function runSuite(){
     return `<tr>
       <td style="font-family:ui-monospace,Menlo,monospace">${label}</td>
       <td style="font-family:ui-monospace,Menlo,monospace">${esc(fmt(res.finalSet))}</td>
-      <td>${res.accepted?'<span class="pill-ok">\u2714 ACCEPTED</span>':'<span class="pill-no">\u2718 REJECTED</span>'}</td>
+      <td>${res.accepted?'<span class="pill-ok">✔ ACCEPTED</span>':'<span class="pill-no">✘ REJECTED</span>'}</td>
       <td>
         <button data-load-tc="${idx}" title="Load into Step Runner" style="padding:2px 8px;font-size:12px">Step</button>
-        <button data-del-tc="${idx}" title="Remove" style="padding:2px 7px;font-size:12px">\u2715</button>
+        <button data-del-tc="${idx}" title="Remove" style="padding:2px 7px;font-size:12px">✕</button>
       </td>
     </tr>`;
   }).join('');
