@@ -73,7 +73,15 @@ svg{width:100%;height:auto;display:block}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--mut);margin-top:8px}
 .legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:5px;vertical-align:-1px;border:1.5px solid var(--tx);background:var(--st)}
 .legend i.dbl{box-shadow:0 0 0 2px var(--card),0 0 0 3.5px var(--tx)}
-.lb{font:600 13px ui-monospace,Menlo,monospace;fill:var(--tx);text-anchor:middle;paint-order:stroke;stroke:var(--card);stroke-width:4px}
+.lb{
+  font:600 13px ui-monospace,Menlo,monospace;
+  fill:var(--tx);
+  text-anchor:middle;
+  paint-order:stroke fill;
+  stroke:var(--card);
+  stroke-width:2.5px;
+  stroke-linejoin:round;
+}
 .tape{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0;min-height:44px}
 .tape span{width:36px;height:42px;display:grid;place-items:center;border:1px solid var(--bd);border-radius:6px;font:600 18px ui-monospace,Menlo,monospace;transition:.2s}
 .tape span.dn{opacity:.45;background:var(--st)}
